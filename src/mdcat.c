@@ -156,6 +156,29 @@ static const char* PrintBlock(const char* text,
   return text;
 }
 
+static const char* PrintBlock2(const char* text,
+                               const char* const first_ptr) {
+  if (text != first_ptr) {
+    if (*(text-1) != '\n') {
+      return text;
+    }
+  }
+
+  if (Peek(text) == ' ') {
+    text++;
+  }
+
+  fputs("\033[3m  ", stdout);
+  while(*text != '\n' && *text != '\0') {
+    putchar(*text);
+    text++;
+  }
+
+  fputs("\033[0m\n", stdout);
+
+  return text;
+}
+
 static void PrettyPrint(const char* text) {
   const char* const first_text = text;
   while(*text) {
@@ -171,6 +194,9 @@ static void PrettyPrint(const char* text) {
         break;
       case '-':
         text = PrintBlock(text, first_text);
+        break;
+      case '>':
+        text = PrintBlock2(text, first_text);
         break;
       default:
         putchar(*text);
