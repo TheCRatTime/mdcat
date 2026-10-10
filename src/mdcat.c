@@ -17,13 +17,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static char Peek(const char* text) {
+  return *(text+1);
+}
+
 static const char* HeaderPrint(const char* text) {
   while(*text == '#') {
     text++;
   }
 
   /* Skipping space */
-  text++;
+  if (Peek(text) == ' ') {
+    text++;
+  }
 
   fputs("\033[1m", stdout);
 
@@ -35,10 +41,6 @@ static const char* HeaderPrint(const char* text) {
   fputs("\n\033[0m", stdout);
 
   return text;
-}
-
-static char Peek(const char* text) {
-  return *(text+1);
 }
 
 static const char* PrintColor(const char* text) {
@@ -151,8 +153,6 @@ static const char* PrintBlock(const char* text,
 
   fputs("\033[1m--\033[0m", stdout);
 
-  text++;
-  
   return text;
 }
 
@@ -171,6 +171,7 @@ static void PrettyPrint(const char* text) {
         break;
       case '-':
         text = PrintBlock(text, first_text);
+        break;
       default:
         putchar(*text);
         break;
