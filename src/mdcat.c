@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 static char Peek(const char* text) {
-  return *(text+1);
+  return (*text == '\0' ? '\0' : *(text+1));
 }
 
 static const char* HeaderPrint(const char* text) {
