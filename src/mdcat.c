@@ -179,8 +179,42 @@ static const char* PrintBlock2(const char* text,
   return text;
 }
 
+
+static const char* PrintLink(const char* text) {
+  text++;
+
+  fputs("\\fB", stdout);
+  
+  while(*text != ']' && *text != '\0') {
+    putchar(*(text++));
+  }
+
+  if (*text == '\0') {
+  error:
+    fputs("\033[1m", stdout);
+    return text;
+  }
+  
+  if (Peek(text) == '\0' || Peek(text+1) == '\0') {
+    goto error;
+  }
+  
+  text += 2;
+
+  fputs(" \033[0m(\033[1m", stdout);
+  
+  while(*text != ')' && *text != '\0') {
+    putchar(*(text++));
+  }
+
+  fputs("\033[0m)", stdout);
+  
+  return text;
+}
+
 static void PrettyPrint(const char* text) {
   const char* const first_text = text;
+  
   while(*text) {
     switch(*text) {
       case '#':
@@ -197,6 +231,9 @@ static void PrettyPrint(const char* text) {
         break;
       case '>':
         text = PrintBlock2(text, first_text);
+        break;
+      case '[':
+        text = PrintLink(text);
         break;
       default:
         putchar(*text);
